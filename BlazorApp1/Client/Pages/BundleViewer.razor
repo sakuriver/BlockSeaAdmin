@@ -1,0 +1,85 @@
+﻿@page "/bundleviewer"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>バンドル市場</PageTitle>
+
+<h1>OpenSeaで登録されているバンドルの一覧がみれるよ</h1>
+
+<p></p>
+
+@if (bundleRootData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <tbody>
+            @foreach (var bundleData in bundleRootData.bundles)
+            {
+               <tr>
+                   <td>メーカー情報</td>
+                   <td><img src="@bundleData.maker.profile_img_url" /><br/>@bundleData.maker.address</td>
+               </tr>
+                <tr>
+                   <td>登録済みアセット一覧</td>
+                    @foreach (var bundle in bundleData.assets)
+                    {
+                            <td><img src="@bundle.image_thumbnail_url"/></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private OpenSeaBundleRoot bundleRootData;
+
+    public class OpenSeaBundleRoot
+    {
+        public List<OpenSeaBundleData> bundles { get; set; }
+    }
+
+    public class OpenSeaBundleData
+    {
+        public BundleMaker maker { get; set; }
+        public string slug { get; set; }
+
+        public List<OpenSeaBundleAsset> assets { get; set; }
+    }
+
+    public class BundleMaker
+    {
+        public string profile_img_url { get; set; } 
+        public string address { get; set; }
+    }
+
+
+    public class OpenSeaBundleAsset
+    {
+        public int id { get; set; }
+
+        public string name { get; set; }
+
+        public string image_url { get; set; }
+
+
+        public string image_thumbnail_url { get; set; }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            bundleRootData = await Http.GetFromJsonAsync<OpenSeaBundleRoot>("https://api.opensea.io/api/v1/bundles?limit=20&offset=0");
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+
+        }
+    }
+}

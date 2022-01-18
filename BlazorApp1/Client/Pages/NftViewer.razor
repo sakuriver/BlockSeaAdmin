@@ -1,0 +1,76 @@
+﻿@page "/nftviewer"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>NFTビューワー</PageTitle>
+
+<h1>OpenSeaで公開されているNFTを見れるビューワーだよ</h1>
+
+<p></p>
+
+@if (rootData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>トークン画像</th>
+                <th>トークン名</th>
+                <th>説明</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var assetData in rootData.assets)
+            {
+                <tr>
+                    <td><a href="@assetData.permalink" >@assetData.id</a></td>
+                    <td><img src="@assetData.image_url" /></td>
+                    <td>@assetData.name</td>
+
+                    <td>@assetData.description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private OpenSeaAssetRoot rootData;
+
+    public class OpenSeaAssetRoot
+    {
+        public List<OpenSeaAssetData> assets { get; set; }
+
+    }
+
+
+    public class OpenSeaAssetData
+    {
+
+        public ulong id { get; set; }
+        public string permalink { get; set; }
+        public string name { get; set; }
+        public string image_url { get; set; }
+        public string token_id { get; set; }
+        public string description { get; set; }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            rootData = await Http.GetFromJsonAsync<OpenSeaAssetRoot>("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=20");
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+
+        }
+    }
+}

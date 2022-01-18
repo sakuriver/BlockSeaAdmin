@@ -1,0 +1,91 @@
+﻿@page "/collectionviewer"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>ブランド鑑定士くん</PageTitle>
+
+<h1>OpenSeaで登録したブランドのお話をしてくれます</h1>
+
+<p></p>
+
+@if (collectionRootData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>スマコン名</th>
+                <th>スマコンのアセット種類</th>
+                <th>スマコン作成日時</th>
+                <th>スマコンのNFTバージョン</th>
+                <th>コントラクト規約名称</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var collectionData in collectionRootData.collections)
+            {
+                @foreach (var asset_contract in collectionData.primary_asset_contracts)
+                {
+                    <tr>
+                        <td>@asset_contract.name</td>
+                        <td>@asset_contract.asset_contract_type</td>
+                        <td>@asset_contract.created_date</td>
+                        <td>@asset_contract.nft_version</td>
+                        <td>@asset_contract.schema_name</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private OpenSeaCollectionRoot collectionRootData;
+
+    public class OpenSeaCollectionRoot
+    {
+        public List<OpenSeaCollectionData> collections { get; set; }
+    }
+
+    public class PrimaryAssetContracts
+    {
+        public string address { get; set; }
+
+        public string asset_contract_type { get; set; }
+
+        public string created_date { get; set; }
+
+        public string name { get; set; }
+
+        public string nft_version { get; set; }
+
+        public string schema_name { get; set; }
+
+
+    }
+
+
+    public class OpenSeaCollectionData
+    {
+        public List<PrimaryAssetContracts> primary_asset_contracts { get; set; }
+
+        public string created_date { get; set; }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            collectionRootData = await Http.GetFromJsonAsync<OpenSeaCollectionRoot>("https://testnets-api.opensea.io/api/v1/collections?offset=0&limit=30");
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+
+        }
+    }
+}

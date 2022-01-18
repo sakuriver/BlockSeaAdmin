@@ -1,0 +1,83 @@
+﻿@page "/technicalreader"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>技術所長さんの説明</PageTitle>
+
+<img src="//icon-192.png" />
+<p>やぁ、ここでは本製品の作り方を公開しているよ</p>
+
+<table class="table-primary table table-info">
+    <thead>
+        <tr ><td colspan="3">コマンドを選んでくれ</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="3"><button @onclick="ToggleSceneList">画面一覧</button></td>
+        </tr>
+        @if (this.isSceneList)
+        {
+            <tr>
+                <td>画面id</td>
+                <td>名前</td>
+                <td>画面説明</td>
+            </tr>
+
+            @foreach (var sceneInfo in sceneInfos)
+            {
+                <tr class="d-md-table-row">
+                    <td> @sceneInfo.id</td>
+                    <td> @sceneInfo.name</td>
+                    <td> @sceneInfo.description</td>
+                </tr>
+            }
+
+        }
+        <tr>
+            <td><button @onclick="ToggleSceneList">通信フロー</button></td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+
+@code {
+    private bool isSceneList { get; set; }
+
+    private List<SceneInfo> sceneInfos { get; set; }
+
+    public class SceneInfo
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+
+        public SceneInfo(int id, string name, string description)
+        {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.sceneInfos = new List<SceneInfo>();
+        SceneInfo bundleInfo = new SceneInfo(1, "Bundle市場", "OpenSeaのBundle情報を表示する画面");
+        this.sceneInfos.Add(bundleInfo);
+        SceneInfo smartContractInfo = new SceneInfo(1, "スマコン図書館", "OpenSeaで承認されたスマコンの検索画面");
+        this.sceneInfos.Add(smartContractInfo);
+        SceneInfo nftLintInfo = new SceneInfo(2, "Nft確認くん", "OpenSea上にあるNFT一覧を閲覧・検索画面");
+        this.sceneInfos.Add(nftLintInfo);
+        SceneInfo blandLintInfo = new SceneInfo(3, "ブランドチェックちぇん", "登録されている各会社やクリエイターのERCを閲覧可能画面");
+        this.sceneInfos.Add(blandLintInfo);
+
+        this.isSceneList = false;
+    }
+
+    private void ToggleSceneList()
+    {
+        this.isSceneList = !this.isSceneList;
+    }
+}

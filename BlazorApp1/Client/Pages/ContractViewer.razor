@@ -1,0 +1,188 @@
+﻿@page "/smartcontractviewer"
+@inject HttpClient Http
+
+
+<PageTitle>スマコン図書館</PageTitle>
+
+<h1>OpenSeaに登録されているコントラクトを調べられるよ</h1>
+
+
+<h2>検索情報</h2>
+
+<input id="contract" type="texxt" @bind="@search_text"></input>
+
+<button class="btn btn-primary" @onclick="SearchContract">スマコン検索</button>
+
+<h2>スマコン検索結果</h2>
+
+
+@if (data == null)
+{
+    <p><em>検索結果待ち...</em></p>
+}
+else
+{
+
+<h3>基本情報</h3>
+<table class="table">
+    <tbody>
+        <tr>
+            <td>スマコン名</td>
+            <td>@data.name</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>アドレス</td>
+            <td>@data.address</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>スマコンシンボル</td>
+            <td>@data.symbol</td>
+            <td></td>
+            <td><img src="@data.image_url" /></td>
+        </tr>
+        <tr>
+            <td><a href="@data.external_link">公式サイト</a></td>
+        </tr>
+
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="ToggleCollectionInformation">コレクション情報切り替え</button>
+    @if (isCollectionView)
+    {
+        <h3>スマコン_コレクション情報</h3>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>コレクション名</td>
+                    <td>@data.collection.name</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>コレクション画像</td>
+                    <td></td>
+                    <td></td>
+                    <td><img src="@data.collection.image_url" /></td>
+                </tr>
+                <tr>
+                    <td colspan="4"><button @onclick="ToggleBanner">バナー開閉</button></td>
+                </tr>
+                <tr>
+                    @if (isToggleBanner)
+                    {
+                        <td colspan="4"><img src="@data.collection.banner_image_url" /></td>
+                    }
+                </tr>
+                <tr>
+                    <td colspan="4"><button @onclick="ToggleSiteInformation">サイト情報開閉</button></td>
+                </tr>
+                    @if (isSiteInformation)
+                    {
+
+                        <tr>
+                            <td colspan="2">コレクション公式サイト</td>
+                            <td ><a href="@data.collection.external_url" target="_blank">公式</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">discord情報</td>
+                            <td ><a href="@data.collection.discord_url" target="_blank">discord公式</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">wiki情報</td>
+                            <td ><a href="@data.collection.wiki_url" target="_blank">wiki公式</a></td>
+                        </tr>
+
+                    }
+
+            </tbody>
+        </table>            
+    }
+}
+
+
+
+@code {
+
+    private OpenSeaContractInformation data ;
+
+    private string search_text;
+
+    private bool isCollectionView;
+
+    private bool isToggleBanner;
+
+    private bool isSiteInformation;
+
+    public class OpenSeaContractCollection
+    {
+
+        public string name { get; set; }
+
+        public string image_url { get; set; }
+
+        public string banner_image_url { get; set; }
+
+        public string wiki_url { get; set; }
+
+        public string external_url { get; set; }
+
+        public string discord_url { get; set; }
+    }
+
+
+    public class OpenSeaContractInformation
+    {
+
+        public OpenSeaContractCollection collection { get; set; }
+
+        public string address { get; set; }
+
+        public string name { get; set; }
+
+        public string symbol { get; set; }
+
+        public string image_url { get; set; }
+
+        public string external_link { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isCollectionView = false;
+    }
+    private async Task SearchContract()
+    {
+        try
+        {
+            data = await Http.GetFromJsonAsync<OpenSeaContractInformation>("https://api.opensea.io/api/v1/asset_contract/" + @search_text);
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+
+        }        
+    }
+
+    private void ToggleCollectionInformation()
+    {
+        isCollectionView = !isCollectionView;
+    }
+
+    private void ToggleBanner()
+    {
+        isToggleBanner = !isToggleBanner;
+    }
+
+    private void ToggleSiteInformation()
+    {
+        isSiteInformation = !isSiteInformation;
+    }
+
+
+
+}
