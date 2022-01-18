@@ -6,4 +6,109 @@
     <h1 class="modal-title">メタバース調査結果の報告</h1>
 </div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<h2>メタバース工作日記</h2>
+
+<table class="table-info">
+<tbody>
+   <tr class="card-header">
+      <td>ジャンル名</td>
+      <td>こうさく名</td>
+   </tr>
+   <tr>
+       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleArMr">AR/MR</button></td>
+   </tr>
+   @if (isToggleArMr)
+   {
+       <tr>
+       </tr>
+            
+   }
+   <tr>
+       <td colspan="2"><button class="btn btn-primary" @onclick="TogglePlatform">プラっとフォーマー系</button></td>
+   </tr>
+   @if (isTogglePlatform)
+   {
+       <tr>
+       </tr>
+            
+   }
+   <tr>
+       <td colspan="2"><button class="btn btn-primary" @onclick="TogglePlatform">VR+VRSNS</button></td>
+   </tr>
+   @if (isVirtualReallity)
+   {
+       <tr>
+       </tr>
+            
+   }
+   <tr>
+       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleCrypto">クリプト</button></td>
+   </tr>
+   @if (isToggleCrypt)
+   {
+       <tr>
+           <td><a href="https://blazorapp1client20220118081749.azurewebsites.net/">ブロックチェーン調査団</a></td>
+       </tr>
+            
+   }
+   <tr>
+       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleArMr">AR/MR</button></td>
+   </tr>
+   @if (isToggleArMr)
+   {
+       <tr>
+       </tr>
+            
+   }
+
+</tbody>
+</table>
+
+
+@code {
+
+    private bool isToggleArMr { get; set; }
+    private bool isTogglePlatform { get; set; }
+    private bool isVirtualReallity { get; set; }
+    private bool isToggleCrypt { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isToggleArMr = false;
+        this.isTogglePlatform = false;
+        this.isVirtualReallity = false;
+        this.isToggleCrypt = false;
+    }
+
+
+    private void ToggleArMr()
+    {
+        this.isToggleArMr = !isToggleArMr;
+
+    }
+
+    private void TogglePlatform()
+    {
+        this.isTogglePlatform = !isTogglePlatform;
+
+    }
+
+
+    private void ToggleVirtualReallity()
+    {
+        this.isVirtualReallity = !isVirtualReallity;
+
+    }
+
+
+    private void ToggleCrypto()
+    {
+        this.isToggleCrypt = !isToggleCrypt;
+
+    }
+
+
+
+
+}
