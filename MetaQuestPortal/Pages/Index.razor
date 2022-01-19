@@ -33,12 +33,16 @@
             
    }
    <tr>
-       <td colspan="2"><button class="btn btn-primary" @onclick="TogglePlatform">VR+VRSNS</button></td>
+       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleVirtualReallity">VR+VRSNS</button></td>
    </tr>
    @if (isVirtualReallity)
    {
-       <tr>
-       </tr>
+        @foreach (var contentReportRow in contentReportVrRows)
+        {
+           <tr>
+                    <td><a href="@contentReportRow.url" target="_blank">@contentReportRow.message</a></td>
+           </tr>
+       }
             
    }
    <tr>
@@ -46,9 +50,13 @@
    </tr>
    @if (isToggleCrypt)
    {
-       <tr>
-           <td><a href="https://blazorapp1client20220118081749.azurewebsites.net/">ブロックチェーン調査団</a></td>
-       </tr>
+        @foreach (var contentReportRow in contentReportChainRows)
+        {
+           <tr>
+                    <td><a href="@contentReportRow.url" target="_blank">@contentReportRow.message</a></td>
+           </tr>
+       }
+
             
    }
    <tr>
@@ -66,12 +74,27 @@
 
 
 @code {
+    public class ContentReportRow
+    {
+        public string message { get; set; }
+
+        public string url { get; set; }
+        public ContentReportRow(string message, string url)
+        {
+            this.message = message;
+            this.url = url;
+        }
+
+    }
+
 
     private bool isToggleArMr { get; set; }
     private bool isTogglePlatform { get; set; }
     private bool isVirtualReallity { get; set; }
     private bool isToggleCrypt { get; set; }
 
+    private List<ContentReportRow> contentReportChainRows { get; set; }
+    private List<ContentReportRow> contentReportVrRows { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,6 +102,12 @@
         this.isTogglePlatform = false;
         this.isVirtualReallity = false;
         this.isToggleCrypt = false;
+        this.contentReportChainRows = new List<ContentReportRow>();
+        this.contentReportChainRows.Add(new ContentReportRow("ブロックチェーン調査団", "https://blazorapp1client20220118081749.azurewebsites.net/"));
+        this.contentReportVrRows = new List<ContentReportRow>();
+        this.contentReportVrRows.Add(new ContentReportRow("FutureMagicLand", "https://cluster.mu/w/a2e0af85-441c-4db1-ae2c-3c56c4c6cd33"));
+        this.contentReportVrRows.Add(new ContentReportRow("ChristmasWeddingStg", "https://cluster.mu/w/1fb8df1a-277b-40ef-b5ef-c6b797e25c82"));
+
     }
 
 
