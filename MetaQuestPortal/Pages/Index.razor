@@ -60,14 +60,16 @@
             
    }
    <tr>
-       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleArMr">AR/MR</button></td>
+       <td colspan="2"><button class="btn btn-primary" @onclick="ToggleGame">Games</button></td>
    </tr>
-   @if (isToggleArMr)
+   @if (isToggleGame)
    {
-       <tr>
-       </tr>
-            
-   }
+        @foreach (var gameRow in contentReportGameRows)
+        {
+            <tr><td><a href="@gameRow.url" target="_blank">@gameRow.message</a></td> </tr>
+        }
+
+    }
 
 </tbody>
 </table>
@@ -92,9 +94,13 @@
     private bool isTogglePlatform { get; set; }
     private bool isVirtualReallity { get; set; }
     private bool isToggleCrypt { get; set; }
+    private bool isToggleGame { get; set; }
 
     private List<ContentReportRow> contentReportChainRows { get; set; }
     private List<ContentReportRow> contentReportVrRows { get; set; }
+    private List<ContentReportRow> contentReportGameRows { get; set; }
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,12 +108,17 @@
         this.isTogglePlatform = false;
         this.isVirtualReallity = false;
         this.isToggleCrypt = false;
+        this.isToggleGame = false;
         this.contentReportChainRows = new List<ContentReportRow>();
         this.contentReportChainRows.Add(new ContentReportRow("ブロックチェーン調査団", "https://blazorapp1client20220118081749.azurewebsites.net/"));
         this.contentReportVrRows = new List<ContentReportRow>();
         this.contentReportVrRows.Add(new ContentReportRow("FutureMagicLand", "https://cluster.mu/w/a2e0af85-441c-4db1-ae2c-3c56c4c6cd33"));
         this.contentReportVrRows.Add(new ContentReportRow("ChristmasWeddingStg", "https://cluster.mu/w/1fb8df1a-277b-40ef-b5ef-c6b797e25c82"));
-
+        this.contentReportVrRows.Add(new ContentReportRow("アニメ模写VR個展", "https://unityroom.com/games/sakuriver_sprint_report_2020_chomadobirthday"));
+        this.contentReportGameRows = new List<ContentReportRow>();
+        this.contentReportGameRows.Add(new ContentReportRow("カメQ", "https://unityroom.com/games/turtle_quiz"));
+        this.contentReportGameRows.Add(new ContentReportRow("レンの救出大作戦", "https://unityroom.com/games/resucue_stg"));
+        this.contentReportGameRows.Add(new ContentReportRow("シャングリラレースゲーム", "https://unityroom.com/games/shangurirarace_lgbt_chrismas"));
     }
 
 
@@ -135,6 +146,11 @@
     {
         this.isToggleCrypt = !isToggleCrypt;
 
+    }
+
+    private void ToggleGame()
+    {
+        this.isToggleGame = !isToggleGame;
     }
 
 
