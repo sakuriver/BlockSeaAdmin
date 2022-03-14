@@ -1,0 +1,167 @@
+﻿@page "/ethmanager"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>仮想通貨管理くん</PageTitle>
+
+<h1>今の運営側の各種確認をしてくれます</h1>
+
+<p></p>
+
+<h2>口座検索情報</h2>
+
+<input id="contract" type="text" @bind="@search_address"></input>
+
+<button class="btn btn-primary" @onclick="SearchAddress">アドレス(口座)検索</button>
+
+@if (etherScanRootData == null || etherTxData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <h2>残高情報(balance information)</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>アカウント用途</th>
+                <th>アドレス</th>
+                <th>残高</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var resultData in etherScanRootData.result)
+            {
+                <tr>
+                    <td>@resultData.name</td>
+                    <td>@resultData.account</td>
+                    <td>@resultData.balance</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <h2>通帳的な明細情報(txlist)</h2>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ブロック番号(blockNumber)</th>
+                <th>宛先(to)</th>
+                <th>ガス代(gas)</th>
+                <th>発生金額(転送量(value))</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var txData in etherTxData.result)
+            {
+                <tr>
+                    <td>@txData.blockNumber</td>
+                    <td>@txData.to</td>
+                    <td>@txData.gas</td>
+                    <td>@txData.value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+}
+
+@code {
+
+    private EtherScanBalanceData etherScanRootData;
+
+    private EtherTxData etherTxData;
+
+    private string search_address;
+
+    public class EthTxBlockInfo
+    {
+
+        public string blockNumber { get; set; }
+
+        public string timestamp { get; set; }
+        public string hash { get; set; }
+
+        public string to { get; set; }
+
+        public string value { get; set; }
+
+        public string gas { get; set; }
+
+
+    }
+
+    public class AccountBalanceInformation
+    {
+        public string account { get; set; }
+
+        public string name  { get; set; }
+
+        public string balance { get; set; }
+
+    }
+
+
+    public class EtherScanBalanceData
+    {
+        public List<AccountBalanceInformation> result { get; set; }
+
+        public string status { get; set; }
+
+        public string message { get; set; }
+
+    }
+
+    /// <summary>
+    /// 入金と引き落とし情報
+    /// </summary>
+    public class EtherTxData
+    {
+
+
+        public List<EthTxBlockInfo> result { get; set; }
+
+        public string status { get; set; }
+
+        public string message { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+
+    private async Task SearchAddress()
+    {
+
+        AccountBalanceInformation managerInfo = new AccountBalanceInformation();
+        managerInfo.name = "NFTエクスポート管理アカウント";
+
+        try
+        {
+            // 合計残高情報
+            var requestUrl = $"https://api.etherscan.io/api?module=account&action=balancemulti&address={search_address}&tag=latest&apikey=53EXBBXSP1XEJIVWIKCNMXWBV1BK5ZAIPQ";
+            etherScanRootData = await Http.GetFromJsonAsync<EtherScanBalanceData>(requestUrl);
+            for (int i = 0; i < etherScanRootData.result.Count; i++) {
+                etherScanRootData.result[i].name = "tester";
+
+            }
+            // 個別明細
+            var txlistUrl = $"https://api.etherscan.io/api?module=account&action=txlist&address={search_address}&sort=asc&apikey=53EXBBXSP1XEJIVWIKCNMXWBV1BK5ZAIPQ";
+            etherTxData = await Http.GetFromJsonAsync<EtherTxData>(txlistUrl);
+            Console.WriteLine(etherTxData.result.Count);
+
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+        }
+    }
+
+
+}
