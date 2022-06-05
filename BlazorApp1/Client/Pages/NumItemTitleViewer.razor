@@ -1,0 +1,98 @@
+﻿@page "/numitemtitleviewer"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>消費アイテム コントラクト @address </PageTitle>
+
+<h1>ERC1155研究君です。  @address のレポーティング情報です</h1>
+
+@if (collectionRootData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>詳細でーた</p>
+
+    <p>コントラクト名称 : @collectionRootData.name</p>
+
+    <p><img src="@collectionRootData.image_url" /></p>
+
+    <p>コントラクト登録日時 : @collectionRootData.created_date</p>
+
+    <h3>コレクション詳細情報</h3>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>コレクション説明文</td>
+                <td>@collectionRootData.collection.description</td>
+            </tr>
+            <tr>
+                <td>コレクション設定画像</td>
+                <td><img src="@collectionRootData.collection.image_url"></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+}
+
+@code {
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? address { get; set; } 
+
+    private OpenSeaCollectionContract collectionRootData;
+
+    public class OpenSeaCollectionContract
+    {
+        /// <summary>
+        /// コントラクト登録日時
+        /// </summary>
+
+        public string created_date { get; set; }
+
+        /// <summary>
+        /// コントラクト名称
+        /// </summary>
+        public string name { get; set; }
+
+        /// <summary>
+        /// コントラクト画像
+        /// </summary>
+        public string image_url { get; set; }
+
+        public ContractCollectionDetail collection { get; set; }
+
+    }
+
+    public class ContractCollectionDetail
+    {
+        /// <summary>
+        /// コレクション説明文
+        /// </summary>
+        public string description { get; set; }
+
+        /// <summary>
+        /// 画像url
+        /// </summary>
+        public string featured_image_url { get; set; }
+
+        public string image_url { get; set; }
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var url = $"https://testnets-api.opensea.io/api/v1/asset_contract/" + address;
+            collectionRootData = await Http.GetFromJsonAsync<OpenSeaCollectionContract>(url);
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+        }
+    }
+}
