@@ -1,0 +1,105 @@
+﻿@page "/numitemviewer"
+@using BlazorApp1.Shared
+@inject HttpClient Http
+
+<PageTitle>消費アイテムトークン確認くん</PageTitle>
+
+<h1>ERC1155研究君です。</h1>
+
+<p></p>
+
+@if (collectionRootData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table-primary table table-info">
+        <thead>
+            <tr>
+                <th>スマコン名</th>
+                <th>スマコンのアセット種類</th>
+                <th>スマコン作成日時</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var asset_contract in itemNumCollections)
+            {
+                <tr>
+                    <td><a href="/numitemtitleviewer?address=@asset_contract.address">@asset_contract.name</a></td>
+                    <td>@asset_contract.asset_contract_type</td>
+                    <td>@asset_contract.created_date</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private OpenSeaCollectionRoot collectionRootData;
+
+    /// <summary>
+    /// 数量型トークン情報の取得
+    /// 
+    /// </summary>
+    public List<PrimaryAssetContracts> itemNumCollections { get; set; }
+
+
+    public class OpenSeaCollectionRoot
+    {
+        public List<OpenSeaCollectionData> collections { get; set; }
+    }
+
+    public class PrimaryAssetContracts
+    {
+        public string address { get; set; }
+
+        public string asset_contract_type { get; set; }
+
+        public string created_date { get; set; }
+
+        public string name { get; set; }
+
+        public string nft_version { get; set; }
+
+        public string schema_name { get; set; }
+
+
+    }
+
+
+    public class OpenSeaCollectionData
+    {
+        public List<PrimaryAssetContracts> primary_asset_contracts { get; set; }
+
+        public string created_date { get; set; }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            collectionRootData = await Http.GetFromJsonAsync<OpenSeaCollectionRoot>("https://testnets-api.opensea.io/api/v1/collections?offset=0&limit=200");
+            itemNumCollections = new List<PrimaryAssetContracts>();
+            foreach (var collectionData in collectionRootData.collections)
+            {
+                // erc規約ベースでみるので、1155以外は、利用情報外にする
+                foreach (var primaryAssetContract in collectionData.primary_asset_contracts)
+                {
+                    if (primaryAssetContract.schema_name != "ERC1155")
+                    {
+                        continue;
+                    }
+                    itemNumCollections.Add(primaryAssetContract);
+
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+
+        }
+    }
+}

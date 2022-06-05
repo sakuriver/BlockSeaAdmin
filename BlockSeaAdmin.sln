@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Client", "Blazor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Shared", "BlazorApp1\Shared\BlazorApp1.Shared.csproj", "{CE4504D0-346A-4C62-8A15-E7EFFFA5DAAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaQuestPortal", "MetaQuestPortal\MetaQuestPortal.csproj", "{28081454-64BF-488D-BA5A-3BD465F8F695}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaQuestPortal", "MetaQuestPortal\MetaQuestPortal.csproj", "{28081454-64BF-488D-BA5A-3BD465F8F695}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
