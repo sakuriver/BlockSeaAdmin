@@ -87,8 +87,10 @@ else
     {
         try
         {
+            // 登録されている情報を取得する
             var url = $"https://testnets-api.opensea.io/api/v1/asset_contract/" + address;
             collectionRootData = await Http.GetFromJsonAsync<OpenSeaCollectionContract>(url);
+
         }
         catch (Exception e)
         {
